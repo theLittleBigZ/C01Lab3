@@ -38,12 +38,28 @@ function App() {
     getNotes()
   }, [])
 
-  const deleteNote = (entry) => {
-    // Code for DELETE here
-  }
+  const deleteNote = async (entry) => {
+    try {
+      const response = await fetch(`http://localhost:4000/deleteNote/${entry._id}`, {
+        method: 'DELETE',
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      } else {
+        const data = await response.json();
+        console.log(data);
+        // Update the state after successful deletion
+        deleteNoteState(entry._id);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   const deleteAllNotes = () => {
     // Code for DELETE all notes here
+
   }
 
   
@@ -72,9 +88,9 @@ function App() {
     setNotes((prevNotes) => [...prevNotes, {_id, title, content}])
   }
 
-  const deleteNoteState = () => {
-    // Code for modifying state after DELETE here
-  }
+  const deleteNoteState = (id) => {
+    setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
+  };
 
   const deleteAllNotesState = () => {
     // Code for modifying state after DELETE all here
