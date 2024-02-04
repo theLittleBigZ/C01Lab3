@@ -49,7 +49,24 @@ app.get("/getAllNotes", express.json(), async (req, res) => {
     res.status(500).json({error: error.message})
   }
 })
-  
+
+//Delete all Notes
+app.delete("/deleteAllNotes", async (req, res) => {
+  try {
+    const collection = db.collection(COLLECTIONS.notes);
+    const data = await collection.deleteMany({});
+
+    if (data.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ error: "No notes found to delete." });
+    }
+    res.json({ response: `All notes deleted.` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Post a note
 app.post("/postNote", express.json(), async (req, res) => {
     try {

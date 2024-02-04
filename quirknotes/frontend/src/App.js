@@ -57,12 +57,25 @@ function App() {
     }
   };
 
-  const deleteAllNotes = () => {
-    // Code for DELETE all notes here
-
-  }
-
+  const deleteAllNotes = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/deleteAllNotes`, {
+        method: 'DELETE',
+      });
   
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      } else {
+        const data = await response.json();
+        console.log(data);
+        // Update the state after successful deletion
+        deleteAllNotesState();
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+    
   // -- Dialog functions --
   const editNote = (entry) => {
     setDialogNote(entry)
@@ -93,12 +106,12 @@ function App() {
   };
 
   const deleteAllNotesState = () => {
-    // Code for modifying state after DELETE all here
-  }
+    setNotes([]);
+  };
 
   const patchNoteState = (_id, title, content) => {
-    // Code for modifying state after PATCH here
-  }
+    setNotes((prevNotes) => prevNotes.map((note) => note._id === _id ? { _id, title, content } : note));
+  };
 
   return (
     <div className="App">
@@ -146,7 +159,7 @@ function App() {
           initialNote={dialogNote}
           closeDialog={closeDialog}
           postNote={postNoteState}
-          // patchNote={patchNoteState}
+          patchNote={patchNoteState}
           />
 
       </header>
